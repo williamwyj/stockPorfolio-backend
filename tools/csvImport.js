@@ -14,20 +14,13 @@ function removeSuffix(filename) {
 }
 
 csvFilenames.forEach((fn, i) => {
-  console.log("fn", fn);
   const inputfn = fn;
   const inputPath = `./tools/db/csv/${inputfn}`;
-  console.log("inputfn", inputfn);
 
   const tableName = removeSuffix(inputfn);
 
   const schemafn = i + "_" + tableName + ".sql";
   const seedfn = i + "_" + tableName + "Data.sql";
-
-  console.log("seedfn", seedfn);
-  console.log("schemafn", schemafn);
-
-  // const readStream = fs.createReadStream(`./tools/db/csv/${fn}`);
 
   const createStream = fs.createWriteStream(`./tools/db/schema/${schemafn}`);
   const insertStream = fs.createWriteStream(`./tools/db/seeds/${seedfn}`);
@@ -41,7 +34,6 @@ csvFilenames.forEach((fn, i) => {
     .pipe(csv())
     .on("data", (row) => {
       if (!headerWritten) {
-        console.log("row", row);
         //First row: infer headers and types
         headers = Object.keys(row);
         columnTypes = {};
@@ -84,28 +76,3 @@ csvFilenames.forEach((fn, i) => {
       console.error("❌ CSV Read Error:", err);
     });
 });
-
-// const dataImport = async () => {
-//   const csvFilenames = await fsp.readdir("./tools/db/csv");
-//   csvFilenames.forEach((fn, i) => {
-//     console.log("fn", fn);
-//     fsp.writeFile(`${i}_${fn}.sql`)
-//   });
-// };
-// dataImport()
-//   .then(() => {
-//     console.log("finished import");
-//   })
-//   .catch(() => {
-//     console.log("finished with errors");
-//   });
-
-// fs.createReadStream("./tools/db/csv/Portfolio.csv")
-//   .pipe(csv())
-//   .on("data", (data) => results.push(data))
-//   .on("end", () => {
-//     console.log(results);
-//   })
-//   .on("error", (error) => {
-//     console.error(error);
-//   });
