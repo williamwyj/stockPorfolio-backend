@@ -1,4 +1,4 @@
-Ticker,Quantity,Sector,Purchase,Close,Weight
+ticker,quantity,sector,purchase,close,weight
 AAPL,1,IT,74.35749817,218.270004,3.461289749
 ADAP,1,Pharmaceuticals,1.200000048,0.291,0.00461463
 AGCO,1,Agriculture,77.13999939,93.089996,1.476205814
