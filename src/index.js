@@ -15,6 +15,16 @@ const pool = new Pool({
 app.use(cors());
 app.use(bodyParser.json());
 
+const routes = require("../routes/routes");
+
+pool
+  .connect()
+  .then((res) => {
+    console.log("database connected");
+  })
+  .catch((err) => console.error("query error", err.stack));
+
+app.use("/query", routes(pool));
 //CREATE
 app.post("/items", async (req, res) => {
   const { name } = req.body;
