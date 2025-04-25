@@ -1,7 +1,6 @@
 INSERT INTO sqlquery ("id", "title", "description", "query") 
 VALUES (1, 'Portfolio Performance over Time', 'Calculate the total value of the portfolio at the end of each month for the past 2 years', 
-'<pre>
-WITH MonthEndDates AS (
+'WITH MonthEndDates AS (
   SELECT 
     DISTINCT 
     DATE_TRUNC("month", date) + INTERVAL "1 month - 1 day" AS month_end_date 
@@ -39,6 +38,5 @@ FROM
 GROUP BY 
   month_end_date 
 ORDER BY
-  Month_end_date;
-</pre>'
+  Month_end_date;'
 );

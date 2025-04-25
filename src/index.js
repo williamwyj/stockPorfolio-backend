@@ -41,6 +41,10 @@ app.get("/portfolio", async (req, res) => {
   res.json(result.rows);
 });
 
+app.get("/sqlqueries", async (req, res) => {
+  const result = await pool.query("SELECT * FROM sqlquery");
+  res.json(result.rows);
+});
 //UPDATE
 app.put("/items/:id", async (req, res) => {
   const { id } = req.params;
