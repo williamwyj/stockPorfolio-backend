@@ -12,7 +12,7 @@ module.exports = (db) => {
         FROM 
         portfolio_prices 
         WHERE 
-        date >= CURRENT_DATE - INTERVAL '2 years' 
+        date <= (SELECT MAX(date) FROM portfolio_prices)
         ORDER BY 
         month_end_date
         ),
@@ -44,6 +44,36 @@ module.exports = (db) => {
           month_end_date 
         ORDER BY
           Month_end_date;
+`
+    )
+      .then((data) => {
+        res.json(data.rows);
+      })
+      .catch((err) => {
+        res.status(500).json({ error: err.message });
+      });
+  });
+  router.get("/query2", (req, res) => {
+    db.query(
+      `WITH StartPrices AS (
+SELECT p.purchase_date date, p.ticker, close
+FROM portfolio p INNER JOIN portfolio_prices pp
+ON p.ticker = pp.ticker AND p.purchase_date = date
+),
+EndPrices AS (
+SELECT date,ticker, close
+FROM portfolio_prices 
+WHERE date = (SELECT MAX(date) from portfolio_prices)
+),
+PerShareReturn AS(
+SELECT sp.date as start_date, ep.date as end_date, sp.ticker, (ep.close - sp.close) AS return_per_share, ((ep.close - sp.close)/ep.close * 100) AS return_perc
+FROM EndPrices ep INNER JOIN StartPrices sp
+ON ep.ticker = sp.ticker
+)
+SELECT start_date, end_date, psr.ticker, (p.quantity * psr.return_per_share) as return, return_perc
+FROM PerShareReturn psr INNER JOIN portfolio p
+ON psr.ticker = p.ticker
+ORDER BY return DESC;
 `
     )
       .then((data) => {
