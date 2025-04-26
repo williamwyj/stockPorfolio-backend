@@ -30,6 +30,21 @@ csvFilenames.forEach((fn, i) => {
   let headers = [];
   let columnTypes = {};
 
+  function isValidDateFormat(dateString) {
+    const regex = /^\d{4}-\d{2}-\d{2}$/;
+    return regex.test(dateString);
+  }
+
+  function checkDataType(value) {
+    if (!isNaN(value) && value.trim() !== "") {
+      return "REAL";
+    } else {
+      if (isValidDateFormat(value)) {
+        return "DATE";
+      } else return "TEXT";
+    }
+  }
+
   fs.createReadStream(inputPath)
     .pipe(csv())
     .on("data", (row) => {
@@ -39,8 +54,7 @@ csvFilenames.forEach((fn, i) => {
         columnTypes = {};
         headers.forEach((header) => {
           const val = row[header];
-          columnTypes[header] =
-            !isNaN(val) && val.trim() !== "" ? "REAL" : "TEXT";
+          columnTypes[header] = checkDataType(val);
         });
         //Write CREATE TABLE statement once
         const createSQL =
