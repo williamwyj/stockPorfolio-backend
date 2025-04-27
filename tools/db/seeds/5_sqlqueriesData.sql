@@ -1,15 +1,7 @@
-INSERT INTO sqlquery ("id", "title", "description", "query") 
-VALUES (1, 'Portfolio Performance over Time', 'Calculate the total value of the portfolio at the end of each month for the past 2 years', 
+INSERT INTO sqlqueries ("id", "method","title", "description", "query") 
+VALUES (1, 'get','Portfolio Performance over Time', 'Calculate the total value of the portfolio at the end of each month for the past 2 years', 
 'WITH MonthEndDates AS (
-  SELECT 
-    DISTINCT 
-    DATE_TRUNC("month", date) + INTERVAL "1 month - 1 day" AS month_end_date 
-  FROM 
-    portfolio_prices 
-  WHERE 
-    date <= (SELECT MAX(date) FROM portfolio_prices)
-  ORDER BY 
-    month_end_date
+  SELECT DISTINCT DATE_TRUNC("month", date) + INTERVAL "1 month - 1 day" AS month_end_date FROM portfolio_prices WHERE date <= (SELECT MAX(date) FROM portfolio_prices) ORDER BY month_end_date
 ),
 LatestPricesByMonth AS (
   SELECT 
@@ -41,7 +33,7 @@ ORDER BY
   Month_end_date;'
 ),
 (
-2, 'Individual Stock return', 'Calculate the individual stock return within the portfolio from the time of purchase to now',
+2, 'get','Individual Stock return', 'Calculate the individual stock return within the portfolio from the time of purchase to now',
 'WITH StartPrices AS (
   SELECT p.purchase_date date, p.ticker, close
   FROM portfolio p INNER JOIN portfolio_prices pp
