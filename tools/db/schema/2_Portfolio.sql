@@ -4,5 +4,6 @@ CREATE TABLE IF NOT EXISTS Portfolio(
 "quantity" REAL,
 "sector" TEXT,
 "purchase_date" DATE,
+"purchase_price" REAL,
 "weight" REAL
 );
