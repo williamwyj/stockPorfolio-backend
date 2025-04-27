@@ -21,12 +21,24 @@ LatestPricesByMonth AS (
     SELECT DISTINCT ticker
     FROM portfolio_prices
   ) s 
-) 
+),
+PortfolioPricesByMonth AS (
+  SELECT
+    month_end_date,
+    lpbm.ticker,
+    (latest_price * quantity) AS holding_price
+  FROM
+    LatestPricesByMonth lpbm
+  INNER JOIN
+    portfolio p
+  ON lpbm.ticker = p.ticker 
+  WHERE lpbm.month_end_date >= p.purchase_date
+)
 SELECT 
   month_end_date, 
-  SUM(latest_price) AS total_portfolio_value 
+  SUM(holding_price) AS total_portfolio_value 
 FROM 
-  LatestPricesByMonth 
+  PortfolioPricesByMonth
 GROUP BY 
   month_end_date 
 ORDER BY
