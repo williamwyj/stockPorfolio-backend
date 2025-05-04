@@ -56,4 +56,26 @@ SELECT p.purchase_date as start_date, ep.date as end_date, p.ticker, p.quantity,
   ON ep.ticker = p.ticker
   ORDER BY holding_return DESC;
 '
+),
+(
+  3, 'get','Portfolio weight by sector','Calculate weight of holds by sector in the portfolio using their latest price',
+  'WITH EndPrices AS (
+    SELECT date, ticker, close
+    FROM portfolio_prices
+    WHERE date = (SELECT MAX(date) from portfolio_prices)
+  ),
+  PortfolioValue AS (
+    SELECT ep.date, ep.ticker, (ep.close * p.quantity) AS value, p.sector
+    FROM EndPrices ep INNER JOIN Portfolio p
+    ON ep.ticker = p.ticker
+  ),
+  PortfolioWeight AS (
+    SELECT date, ticker, (value / SUM(value)OVER()) AS holding_weight, sector
+    FROM PortfolioValue
+  )
+  SELECT SUM(holding_weight)*100 as sector_weight_percentage, sector
+  FROM PortfolioWeight
+  GROUP by sector
+  ORDER by sector_weight_percentage DESC;
+  '
 );
